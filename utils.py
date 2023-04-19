@@ -5,22 +5,17 @@ os.environ['KMP_DUPLICATE_LIB_OK']='True'
 from collections import defaultdict
 from nltk.tokenize import word_tokenize
 import re
+import torch
 
-def preprocess_text(text):
-    """
-    """
-    text = text.lower()
-    words = word_tokenize(text)
-
-    return words
-
-def load_sp_corpus(min_length=5, verbose=False):
+def reload_sp_corpus(min_length=5, corpus_file="sp_corpus.pth", vocab_file="sp_vocab.pth", verbose=False):
     """
     Loads in and formats the file Shakespeare.txt
 
     Inputs:
         verbose: enables printed checkpoints and information about the dataset.
         min_length: The minimum length of a sentence (in tokens) needed to be added to the corpus.
+        corpus_file: name of file to store the corpus
+        sp_vocab.pth: name of the file to store the vocab
 
     Outputs:
         corpus: A list of strings, where each line is a sentence (until stanza break or punctuation)
@@ -59,4 +54,6 @@ def load_sp_corpus(min_length=5, verbose=False):
         print(f"Minimum sentence length (tokens): {min([len(sentence) for sentence in corpus]):.0f}")
         print(f"Maximum sentence length (tokens): {max([len(sentence) for sentence in corpus]):.0f}")
     
+    torch.save(obj=corpus, f=corpus_file)
+    torch.save(obj=vocab, f=vocab_file)
     return corpus, vocab
