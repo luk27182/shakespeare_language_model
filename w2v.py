@@ -1,18 +1,20 @@
 # %%
 import os
-import utils
-from utils import W2V_FILE, CORPUS_FILE, VOCAB_LIST_FILE, W2V_VEC_SIZE
-import torch
 from gensim.models import Word2Vec
 
+W2V_FILE = "w2v.pth"
+CORPUS_FILE = "corpus.csv"
 
+
+# %%
+with open("corpus.csv", "r", newline="") as f:
+    corpus = f.readlines()
+corpus = [line.split(',') for line in corpus]
+
+# %%
 if not os.path.isfile(W2V_FILE):
-    if not os.path.isfile(CORPUS_FILE) or not os.path.isfile(VOCAB_LIST_FILE):
-        corpus, vocab = utils.reload_sp_corpus(verbose=True)
-    else:
-        corpus, vocab = torch.load(CORPUS_FILE), torch.load(VOCAB_LIST_FILE)
     print("Training W2V model on corpus...")
-    w2v = Word2Vec(sentences=corpus, vector_size=W2V_VEC_SIZE, window=5, epochs=20)
+    w2v = Word2Vec(sentences=corpus, vector_size=64, window=5, epochs=20)
     print("done!")
     w2v.add_null_word()
     w2v.save(W2V_FILE)
